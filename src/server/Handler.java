@@ -42,10 +42,10 @@ public class Handler implements HttpHandler {
 
         JSONObject obj = new JSONObject();
         if (server.userExist(username, password)) {
-            obj.put("msg", "success: Login successfully.");
+            obj.put("success", "Login successfully.");
         }
         else {
-            obj.put("msg", "error: Username or password are wrong.");
+            obj.put("error", "Username or password are wrong.");
         }
         String jsonText = jsonToString(obj);
 
@@ -57,15 +57,14 @@ public class Handler implements HttpHandler {
         Map<String,String> params = queryToMap(query);
         String username = params.get("username");
         String password = params.get("password");
-        System.out.println(username + " " + password);
 
         JSONObject obj = new JSONObject();
         if (server.userExist(username)) {
-            obj.put("msg", "error: username " + username + " already exists.");
+            obj.put("error", "Username " + username + " already exists.");
         }
         else {
             server.insertUser(username, password);
-            obj.put("msg", "success: user registered successfully.");
+            obj.put("success", "User registered successfully.");
         }
         String jsonText = jsonToString(obj);
         writeResponse(httpExchange, jsonText);

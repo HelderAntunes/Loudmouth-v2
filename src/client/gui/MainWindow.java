@@ -11,6 +11,9 @@ public class MainWindow extends JFrame {
     private Register register;
     private HttpClient httpClient;
 
+    private String username;
+    private String password;
+
     /**
      * Launch the application.
      */
@@ -61,4 +64,21 @@ public class MainWindow extends JFrame {
         CardLayout cardLayout = (CardLayout) contentPane.getLayout();
         cardLayout.show(contentPane, layout);
     }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
 }
