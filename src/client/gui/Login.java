@@ -16,6 +16,7 @@ public class Login {
     private JButton loginButton;
     private JButton notRegisteredPressHereButton;
     private JLabel errorLbl;
+    private JLabel titleLbl;
     private HttpClient httpClient;
 
     public Login(MainWindow parent, HttpClient httpClient) {
@@ -46,6 +47,7 @@ public class Login {
                         errorLbl.setText(msg);
                         parent.setUsername(username);
                         parent.setPassword(password);
+                        parent.showLayout("chats");
                     }
                     else if (jsonObject.containsKey("error")) {
                         String msg = (String) jsonObject.get("error");
@@ -57,6 +59,9 @@ public class Login {
                 }
             }
         });
+
+        titleLbl.setFont (titleLbl.getFont ().deriveFont (32.0f));
+
     }
 
     void setVisible(boolean b){

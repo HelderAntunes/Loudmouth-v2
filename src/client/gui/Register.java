@@ -17,6 +17,7 @@ public class Register {
     private JButton registerButton;
     private JButton alreadyRegisteredPressHereButton;
     private JLabel errorLbl;
+    private JLabel titleLbl;
     private HttpClient httpClient;
 
     public Register(MainWindow parent, HttpClient httpClient) {
@@ -52,6 +53,7 @@ public class Register {
                         errorLbl.setText(msg);
                         parent.setUsername(username);
                         parent.setPassword(password);
+                        parent.showLayout("chats");
                     }
                     else if (jsonObject.containsKey("error")) {
                         String msg = (String) jsonObject.get("error");
@@ -64,6 +66,9 @@ public class Register {
 
             }
         });
+
+        titleLbl.setFont (titleLbl.getFont ().deriveFont (32.0f));
+
     }
 
     public void setVisible(boolean b){

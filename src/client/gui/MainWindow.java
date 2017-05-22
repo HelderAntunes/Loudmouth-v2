@@ -9,6 +9,7 @@ public class MainWindow extends JFrame {
     private JPanel contentPane;
     private Login login;
     private Register register;
+    private Chats chats;
     private HttpClient httpClient;
 
     private String username;
@@ -53,9 +54,12 @@ public class MainWindow extends JFrame {
         register = new Register(this, httpClient);
         register.setVisible(true);
 
+        chats = new Chats(this, httpClient);
+        chats.setVisible(true);
 
         contentPane.add(login.getPanel(), "login");
         contentPane.add(register.getPanel(), "register");
+        contentPane.add(chats.getPanel(), "chats");
 
         showLayout("login");
     }
