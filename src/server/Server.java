@@ -25,14 +25,19 @@ public class Server {
         httpServer.createContext("/login", handler);
         httpServer.createContext("/register", handler);
         httpServer.createContext("/info", handler);
-        /*
-        HttpContext hc1 = server.createContext("/post", handler);
-        hc1.setAuthenticator(new BasicAuthenticator("post") {
+
+        HttpContext hcCreateChat = httpServer.createContext("/createChat", handler);
+
+
+        BasicAuthenticator bscAuth = new BasicAuthenticator("user_password") {
             @Override
             public boolean checkCredentials(String user, String pwd) {
-                return user.equals("admin") && pwd.equals("password");
+                if (userExist(user) && userExist(user, pwd))
+                    return true;
+                return false;
             }
-        });*/
+        };
+        hcCreateChat.setAuthenticator(bscAuth);
 
         httpServer.setExecutor(null);
         httpServer.start();

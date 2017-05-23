@@ -27,8 +27,8 @@ public class HttpClient {
     public String sendGet(String path, String urlParameters) throws Exception {
         String url = base_url + path + "?" + urlParameters;
         URL obj = new URL(url);
-
         HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+
         con.setRequestMethod("GET");
 
         int responseCode = con.getResponseCode();
@@ -38,12 +38,11 @@ public class HttpClient {
         return readResponse(con);
     }
 
-    //  String urlParameters = "username=" + username + "&password=" + password;
     public String sendPost(String path, String urlParameters) throws Exception {
         String url = base_url + path;
         URL obj = new URL(url);
-
         HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+
         con.setRequestMethod("POST");
         con.setDoOutput(true);
         con.setDoInput(true);
@@ -54,6 +53,33 @@ public class HttpClient {
             return "Error: code " + responseCode + ".";
 
         return readResponse(con);
+    }
+
+    public  String sendPostBasicAuthentication(String path, String urlParameters, String username, String password) throws Exception {
+        String url = base_url + path;
+        URL obj = new URL(url);
+        HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+        String authorizationEncoded = getAuthorizationStringEncoded(username, password);
+
+        con.addRequestProperty("Authorization", authorizationEncoded);
+        con.setRequestMethod("POST");
+        con.setDoOutput(true);
+        con.setDoInput(true);
+        setPostParameters(con, urlParameters);
+
+        int responseCode = con.getResponseCode();
+        if (responseCode != 200)
+            return "Error: code " + responseCode + ".";
+
+        return readResponse(con);
+    }
+
+    private String getAuthorizationStringEncoded(String username, String password) {
+        byte[] authBytes = (username + ":" + password).getBytes();
+        StringBuilder authBuilder = new StringBuilder()
+                .append("Basic ")
+                .append(new String(Base64.getEncoder().encode(authBytes)));
+        return authBuilder.toString();
     }
 
     private void setPostParameters(HttpURLConnection con, String postParameters) throws IOException {
@@ -74,17 +100,6 @@ public class HttpClient {
         }
         in.close();
         return response.toString();
-    }
-
-    private String getSuccessMsg(String response) throws ParseException {
-        JSONParser parser = new JSONParser();
-        JSONObject jsonObj = (JSONObject)parser.parse(response);
-
-        if (jsonObj.containsKey("success"))
-            return "Success";
-        else if (jsonObj.containsKey("error"))
-            return "Error: " + jsonObj.get("msg");
-        return "Error.";
     }
 
    /* public void sendGet() throws Exception {

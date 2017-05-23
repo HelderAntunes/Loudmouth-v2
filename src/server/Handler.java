@@ -28,6 +28,9 @@ public class Handler implements HttpHandler {
             case "/register":
                 handleRegister(httpExchange);
                 break;
+            case "/createChat":
+                handleCreateChat(httpExchange);
+                break;
             default:
                 handleInfo(httpExchange);
                 break;
@@ -65,6 +68,25 @@ public class Handler implements HttpHandler {
         else {
             server.insertUser(username, password);
             obj.put("success", "User registered successfully.");
+        }
+        String jsonText = jsonToString(obj);
+        writeResponse(httpExchange, jsonText);
+    }
+
+    private void handleCreateChat(HttpExchange httpExchange) throws IOException {
+        String query = getQueryOfPostRequest(httpExchange);
+        Map<String,String> params = queryToMap(query);
+        String chatName = params.get("chatName");
+        String creator = params.get("creator");
+        JSONObject obj = new JSONObject();
+
+        if (server.chatExist(chatName)) {
+            obj.put("error", "Chat " + chatName + " already exists.");
+        }
+        else {
+            server.insertChat(chatName);
+            server.addUserToChat(creator, chatName);
+            obj.put("success", "Chat created successfully.");
         }
         String jsonText = jsonToString(obj);
         writeResponse(httpExchange, jsonText);
