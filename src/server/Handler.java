@@ -3,9 +3,11 @@ package server;
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -30,6 +32,9 @@ public class Handler implements HttpHandler {
                 break;
             case "/createChat":
                 handleCreateChat(httpExchange);
+                break;
+            case "/getMyChats":
+                handleGetMyChats(httpExchange);
                 break;
             default:
                 handleInfo(httpExchange);
@@ -88,6 +93,20 @@ public class Handler implements HttpHandler {
             server.addUserToChat(creator, chatName);
             obj.put("success", "Chat created successfully.");
         }
+        String jsonText = jsonToString(obj);
+        writeResponse(httpExchange, jsonText);
+    }
+
+    private void handleGetMyChats(HttpExchange httpExchange) throws IOException {
+        Map<String,String> params = queryToMap(httpExchange.getRequestURI().getQuery());
+        String username = params.get("username");
+        JSONObject obj = new JSONObject();
+        JSONArray array = new JSONArray();
+        ArrayList<String> myChats = server.getUserChats(username);
+
+        for (String chat: myChats)
+            array.add(chat);
+        obj.put("chats", array);
         String jsonText = jsonToString(obj);
         writeResponse(httpExchange, jsonText);
     }

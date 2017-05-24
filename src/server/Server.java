@@ -27,7 +27,7 @@ public class Server {
         httpServer.createContext("/info", handler);
 
         HttpContext hcCreateChat = httpServer.createContext("/createChat", handler);
-
+        HttpContext hcGetMyChats = httpServer.createContext("/getMyChats", handler);
 
         BasicAuthenticator bscAuth = new BasicAuthenticator("user_password") {
             @Override
@@ -38,6 +38,7 @@ public class Server {
             }
         };
         hcCreateChat.setAuthenticator(bscAuth);
+        hcGetMyChats.setAuthenticator(bscAuth);
 
         httpServer.setExecutor(null);
         httpServer.start();

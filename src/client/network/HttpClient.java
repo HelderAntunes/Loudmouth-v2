@@ -74,6 +74,22 @@ public class HttpClient {
         return readResponse(con);
     }
 
+    public  String sendGetBasicAuthentication(String path, String urlParameters, String username, String password) throws Exception {
+        String url = base_url + path + "?" + urlParameters;
+        URL obj = new URL(url);
+        HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+        String authorizationEncoded = getAuthorizationStringEncoded(username, password);
+
+        con.addRequestProperty("Authorization", authorizationEncoded);
+        con.setRequestMethod("GET");
+
+        int responseCode = con.getResponseCode();
+        if (responseCode != 200)
+            return "Error: code " + responseCode + ".";
+
+        return readResponse(con);
+    }
+
     private String getAuthorizationStringEncoded(String username, String password) {
         byte[] authBytes = (username + ":" + password).getBytes();
         StringBuilder authBuilder = new StringBuilder()

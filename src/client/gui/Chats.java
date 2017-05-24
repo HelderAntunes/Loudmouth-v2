@@ -1,12 +1,14 @@
 package client.gui;
 
 import client.network.HttpClient;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Iterator;
 
 public class Chats {
     private MainWindow parent;
@@ -15,7 +17,7 @@ public class Chats {
     private JLabel myChatsTitleLbl;
     private JLabel myInvitationsLbl;
     private JLabel createChatLbl;
-    private JComboBox comboBox1;
+    private JComboBox myChatsComboBox;
     private JComboBox comboBox2;
     private JButton enterButton;
     private JButton leaveButton;
@@ -55,6 +57,7 @@ public class Chats {
                     if (jsonObject.containsKey("success")) {
                         String msg = (String) jsonObject.get("success");
                         createChatInfoLbl.setText(msg);
+                        setMyChats();
                     }
                     else if (jsonObject.containsKey("error")) {
                         String msg = (String) jsonObject.get("error");
@@ -64,10 +67,30 @@ public class Chats {
                 } catch (Exception e1) {
                     e1.printStackTrace();
                 }
-
-
             }
         });
+    }
+
+    public void setMyChats() {
+        String username = parent.getUsername();
+        String password = parent.getPassword();
+        String urlParameters = "username=" + username;
+
+        try {
+            String response = httpClient.sendGetBasicAuthentication("/getMyChats", urlParameters, username, password);
+            JSONParser parser = new JSONParser();
+            JSONObject jsonObject = (JSONObject) parser.parse(response);
+
+            myChatsComboBox.removeAllItems();
+            if (jsonObject.containsKey("chats")) {
+                JSONArray chats = (JSONArray) jsonObject.get("chats");
+                Iterator<String> iterator = chats.iterator();
+                while (iterator.hasNext())
+                    myChatsComboBox.addItem(iterator.next());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     void setVisible(boolean b){
