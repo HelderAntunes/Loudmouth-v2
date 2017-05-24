@@ -37,6 +37,9 @@ public class Handler implements HttpHandler {
             case "/getMyChats":
                 handleGetMyChats(httpExchange);
                 break;
+            case "/getInvites":
+                handleGetInvites(httpExchange);
+                break;
             case "/invitation":
                 handleInvitation(httpExchange);
                 break;
@@ -111,6 +114,20 @@ public class Handler implements HttpHandler {
         for (String chat: myChats)
             array.add(chat);
         obj.put("chats", array);
+        String jsonText = jsonToString(obj);
+        writeResponse(httpExchange, jsonText);
+    }
+
+    private void handleGetInvites(HttpExchange httpExchange) throws IOException {
+        Map<String,String> params = queryToMap(httpExchange.getRequestURI().getQuery());
+        String username = params.get("username");
+        JSONObject obj = new JSONObject();
+        JSONArray array = new JSONArray();
+        ArrayList<String> invitations = server.getUserInvitations(username);
+
+        for (String invitation: invitations)
+            array.add(invitation);
+        obj.put("invitations", array);
         String jsonText = jsonToString(obj);
         writeResponse(httpExchange, jsonText);
     }

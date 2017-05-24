@@ -28,6 +28,7 @@ public class Server {
 
         HttpContext hcCreateChat = httpServer.createContext("/createChat", handler);
         HttpContext hcGetMyChats = httpServer.createContext("/getMyChats", handler);
+        HttpContext hcGetInvites = httpServer.createContext("/getInvites", handler);
         HttpContext hcInvitation = httpServer.createContext("/invitation", handler);
 
         BasicAuthenticator bscAuth = new BasicAuthenticator("user_password") {
@@ -40,6 +41,7 @@ public class Server {
         };
         hcCreateChat.setAuthenticator(bscAuth);
         hcGetMyChats.setAuthenticator(bscAuth);
+        hcGetInvites.setAuthenticator(bscAuth);
         hcInvitation.setAuthenticator(bscAuth);
 
         httpServer.setExecutor(null);

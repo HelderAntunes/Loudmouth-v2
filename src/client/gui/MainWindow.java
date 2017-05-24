@@ -70,8 +70,10 @@ public class MainWindow extends JFrame {
     }
 
     void showLayout(String layout){
-        if (layout.equals("chats"))
+        if (layout.equals("chats")) {
             chats.setMyChats();
+            chats.setInvites();
+        }
         CardLayout cardLayout = (CardLayout) contentPane.getLayout();
         cardLayout.show(contentPane, layout);
     }

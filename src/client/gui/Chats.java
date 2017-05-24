@@ -18,7 +18,7 @@ public class Chats {
     private JLabel myInvitationsLbl;
     private JLabel createChatLbl;
     private JComboBox myChatsComboBox;
-    private JComboBox comboBox2;
+    private JComboBox invitationsComboBox;
     private JButton enterButton;
     private JButton leaveButton;
     private JButton acceptButton;
@@ -86,7 +86,7 @@ public class Chats {
         });
     }
 
-    public void setMyChats() {
+    void setMyChats() {
         String username = parent.getUsername();
         String password = parent.getPassword();
         String urlParameters = "username=" + username;
@@ -99,9 +99,31 @@ public class Chats {
             myChatsComboBox.removeAllItems();
             if (jsonObject.containsKey("chats")) {
                 JSONArray chats = (JSONArray) jsonObject.get("chats");
-                Iterator<String> iterator = chats.iterator();
+                Iterator iterator = chats.iterator();
                 while (iterator.hasNext())
                     myChatsComboBox.addItem(iterator.next());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    void setInvites() {
+        String username = parent.getUsername();
+        String password = parent.getPassword();
+        String urlParameters = "username=" + username;
+
+        try {
+            String response = httpClient.sendGetBasicAuthentication("/getInvites", urlParameters, username, password);
+            JSONParser parser = new JSONParser();
+            JSONObject jsonObject = (JSONObject) parser.parse(response);
+
+            invitationsComboBox.removeAllItems();
+            if (jsonObject.containsKey("invitations")) {
+                JSONArray chats = (JSONArray) jsonObject.get("invitations");
+                Iterator iterator = chats.iterator();
+                while (iterator.hasNext())
+                    invitationsComboBox.addItem(iterator.next());
             }
         } catch (Exception e) {
             e.printStackTrace();
