@@ -69,7 +69,7 @@ public class MainWindow extends JFrame {
         showLayout("login");
     }
 
-    public void showLayout(String layout){
+    void showLayout(String layout){
         if (layout.equals("chats"))
             chats.setMyChats();
         CardLayout cardLayout = (CardLayout) contentPane.getLayout();
@@ -92,8 +92,12 @@ public class MainWindow extends JFrame {
         this.username = username;
     }
 
-    public Chat getChat() {
+    Chat getChat() {
         return chat;
     }
+
+    Login getLogin() {return login;}
+
+    Register getRegister() {return register;}
 
 }

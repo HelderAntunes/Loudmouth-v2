@@ -71,12 +71,19 @@ public class Register {
 
     }
 
-    public void setVisible(boolean b){
+    void setVisible(boolean b){
         this.panel.setVisible(b);
     }
 
-    public JPanel getPanel() {
+    JPanel getPanel() {
         return panel;
+    }
+
+    void clearRegisterForm() {
+        errorLbl.setText("");
+        usernameTextField.setText("");
+        passwordPasswordField.setText("");
+        repeatPasswordPasswordField.setText("");
     }
 
 }

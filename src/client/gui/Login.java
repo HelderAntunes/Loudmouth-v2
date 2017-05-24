@@ -72,4 +72,10 @@ public class Login {
         return panel;
     }
 
+    void clearLoginForm() {
+        usernameTextField.setText("");
+        passwordPasswordField.setText("");
+        errorLbl.setText("");
+    }
+
 }

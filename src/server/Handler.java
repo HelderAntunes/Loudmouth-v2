@@ -1,6 +1,7 @@
 package server;
 
 import com.sun.net.httpserver.Headers;
+import com.sun.net.httpserver.HttpContext;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import org.json.simple.JSONArray;
@@ -35,6 +36,9 @@ public class Handler implements HttpHandler {
                 break;
             case "/getMyChats":
                 handleGetMyChats(httpExchange);
+                break;
+            case "/invitation":
+                handleInvitation(httpExchange);
                 break;
             default:
                 handleInfo(httpExchange);
@@ -107,6 +111,33 @@ public class Handler implements HttpHandler {
         for (String chat: myChats)
             array.add(chat);
         obj.put("chats", array);
+        String jsonText = jsonToString(obj);
+        writeResponse(httpExchange, jsonText);
+    }
+
+    private void handleInvitation(HttpExchange httpExchange) throws IOException {
+        String query = getQueryOfPostRequest(httpExchange);
+        Map<String,String> params = queryToMap(query);
+        String chatName = params.get("chatName");
+        String invitee = params.get("invitee");
+        JSONObject obj = new JSONObject();
+        ArrayList<String> invitations = server.getUserInvitations(invitee);
+        ArrayList<String> chats = server.getUserChats(invitee);
+
+        if (!server.userExist(invitee)) {
+            obj.put("error", "The user " + invitee + " does not exist.");
+        }
+        else if (chats.contains(chatName)) {
+            obj.put("error", "The user " + invitee + " already is on chat.");
+        }
+        else if (!invitations.contains(chatName)) {
+            server.insertInvitation(chatName, invitee);
+            obj.put("success", "Invitation created successfully.");
+        }
+        else if (invitations.contains(chatName)) {
+            obj.put("error", "The user " + invitee + " already was invited.");
+        }
+
         String jsonText = jsonToString(obj);
         writeResponse(httpExchange, jsonText);
     }

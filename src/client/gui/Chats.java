@@ -76,6 +76,14 @@ public class Chats {
                 parent.showLayout("chat");
             }
         });
+        logOutButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                parent.showLayout("login");
+                Login login = parent.getLogin();
+                login.clearLoginForm();
+            }
+        });
     }
 
     public void setMyChats() {
