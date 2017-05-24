@@ -45,6 +45,9 @@ public class Handler implements HttpHandler {
             case "/acceptInvite":
                 handleAcceptInvite(httpExchange);
                 break;
+            case "/declineInvite":
+                handleDeclineInvite(httpExchange);
+                break;
             default:
                 handleInfo(httpExchange);
                 break;
@@ -170,6 +173,20 @@ public class Handler implements HttpHandler {
 
         server.acceptInvitation(invitee, chatName);
         obj.put("success", "You are in the chat.");
+
+        String jsonText = jsonToString(obj);
+        writeResponse(httpExchange, jsonText);
+    }
+
+    private void handleDeclineInvite(HttpExchange httpExchange) throws IOException {
+        String query = getQueryOfPostRequest(httpExchange);
+        Map<String,String> params = queryToMap(query);
+        String chatName = params.get("chatName");
+        String invitee = params.get("invitee");
+        JSONObject obj = new JSONObject();
+
+        server.declineInvitation(invitee, chatName);
+        obj.put("success", "You declined the invitation.");
 
         String jsonText = jsonToString(obj);
         writeResponse(httpExchange, jsonText);

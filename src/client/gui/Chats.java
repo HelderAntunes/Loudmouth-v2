@@ -98,7 +98,29 @@ public class Chats {
                     JSONObject jsonObject = (JSONObject) parser.parse(response);
 
                     if (jsonObject.containsKey("success")) {
-                        String msg = (String) jsonObject.get("success");
+                        setMyChats();
+                        setInvites();
+                    }
+
+                } catch (Exception e1) {
+                    e1.printStackTrace();
+                }
+            }
+        });
+        declineButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String chatName = String.valueOf(invitationsComboBox.getSelectedItem());
+                String username = parent.getUsername();
+                String password = parent.getPassword();
+                String urlParameters = "chatName=" + chatName + "&invitee=" + username;
+
+                try {
+                    String response = httpClient.sendPostBasicAuthentication("/declineInvite", urlParameters, username, password);
+                    JSONParser parser = new JSONParser();
+                    JSONObject jsonObject = (JSONObject) parser.parse(response);
+
+                    if (jsonObject.containsKey("success")) {
                         setMyChats();
                         setInvites();
                     }
