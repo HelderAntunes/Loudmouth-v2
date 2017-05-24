@@ -30,6 +30,7 @@ public class Server {
         HttpContext hcGetMyChats = httpServer.createContext("/getMyChats", handler);
         HttpContext hcGetInvites = httpServer.createContext("/getInvites", handler);
         HttpContext hcInvitation = httpServer.createContext("/invitation", handler);
+        HttpContext hcAcceptInvite = httpServer.createContext("/acceptInvite", handler);
 
         BasicAuthenticator bscAuth = new BasicAuthenticator("user_password") {
             @Override
@@ -43,6 +44,7 @@ public class Server {
         hcGetMyChats.setAuthenticator(bscAuth);
         hcGetInvites.setAuthenticator(bscAuth);
         hcInvitation.setAuthenticator(bscAuth);
+        hcAcceptInvite.setAuthenticator(bscAuth);
 
         httpServer.setExecutor(null);
         httpServer.start();
@@ -104,8 +106,8 @@ public class Server {
         }
     }
 
-    boolean insertInvitation(String chatName, String username) {
-        return insertInHashMap(user_invitations, username, chatName);
+    void insertInvitation(String chatName, String username) {
+        insertInHashMap(user_invitations, username, chatName);
     }
 
     ArrayList<String> getUserInvitations(String username) {
@@ -114,15 +116,13 @@ public class Server {
         return user_invitations.get(username);
     }
 
-    boolean acceptInvitation(String username, String chatName) {
+    void acceptInvitation(String username, String chatName) {
         ArrayList<String> userInvitations = getUserInvitations(username);
         if (userInvitations.contains(chatName)) {
             userInvitations.remove(chatName);
             addUserToChat(username, chatName);
-            return true;
         }
         else {
-            return false;
         }
     }
 
@@ -137,7 +137,7 @@ public class Server {
         }
     }
 
-    boolean insertInHashMap(ConcurrentHashMap<String, ArrayList<String>> hashMap, String key, String value) {
+    private boolean insertInHashMap(ConcurrentHashMap<String, ArrayList<String>> hashMap, String key, String value) {
         if (hashMap.containsKey(key)) {
             ArrayList<String> currInv = hashMap.get(key);
             if (currInv.contains(value))

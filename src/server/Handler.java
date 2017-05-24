@@ -1,7 +1,6 @@
 package server;
 
 import com.sun.net.httpserver.Headers;
-import com.sun.net.httpserver.HttpContext;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import org.json.simple.JSONArray;
@@ -42,6 +41,9 @@ public class Handler implements HttpHandler {
                 break;
             case "/invitation":
                 handleInvitation(httpExchange);
+                break;
+            case "/acceptInvite":
+                handleAcceptInvite(httpExchange);
                 break;
             default:
                 handleInfo(httpExchange);
@@ -154,6 +156,20 @@ public class Handler implements HttpHandler {
         else if (invitations.contains(chatName)) {
             obj.put("error", "The user " + invitee + " already was invited.");
         }
+
+        String jsonText = jsonToString(obj);
+        writeResponse(httpExchange, jsonText);
+    }
+
+    private void handleAcceptInvite(HttpExchange httpExchange) throws IOException {
+        String query = getQueryOfPostRequest(httpExchange);
+        Map<String,String> params = queryToMap(query);
+        String chatName = params.get("chatName");
+        String invitee = params.get("invitee");
+        JSONObject obj = new JSONObject();
+
+        server.acceptInvitation(invitee, chatName);
+        obj.put("success", "You are in the chat.");
 
         String jsonText = jsonToString(obj);
         writeResponse(httpExchange, jsonText);
