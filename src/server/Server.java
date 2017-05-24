@@ -37,6 +37,7 @@ public class Server {
         HttpContext hcInvitation = httpServer.createContext("/invitation", handler);
         HttpContext hcAcceptInvite = httpServer.createContext("/acceptInvite", handler);
         HttpContext hcDeclineInvite = httpServer.createContext("/declineInvite", handler);
+        HttpContext hcLeaveChat = httpServer.createContext("/leaveChat", handler);
 
         BasicAuthenticator bscAuth = new BasicAuthenticator("user_password") {
             @Override
@@ -52,6 +53,7 @@ public class Server {
         hcInvitation.setAuthenticator(bscAuth);
         hcAcceptInvite.setAuthenticator(bscAuth);
         hcDeclineInvite.setAuthenticator(bscAuth);
+        hcLeaveChat.setAuthenticator(bscAuth);
 
         httpServer.setExecutor(null);
         httpServer.start();
