@@ -33,7 +33,6 @@ public class Chats {
         this.parent = parent;
         this.httpClient = httpClient;
         titleLbl.setFont (titleLbl.getFont ().deriveFont (32.0f));
-        myChatsTitleLbl.setFont (titleLbl.getFont ().deriveFont (16.0f));
         myInvitationsLbl.setFont (titleLbl.getFont ().deriveFont (16.0f));
         createChatLbl.setFont (titleLbl.getFont ().deriveFont (16.0f));
         createButton.addActionListener(new ActionListener() {
@@ -67,6 +66,14 @@ public class Chats {
                 } catch (Exception e1) {
                     e1.printStackTrace();
                 }
+            }
+        });
+        enterButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String chatName = String.valueOf(myChatsComboBox.getSelectedItem());
+                parent.getChat().setChannelName(chatName);
+                parent.showLayout("chat");
             }
         });
     }

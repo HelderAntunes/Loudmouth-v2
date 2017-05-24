@@ -10,6 +10,7 @@ public class MainWindow extends JFrame {
     private Login login;
     private Register register;
     private Chats chats;
+    private Chat chat;
     private HttpClient httpClient;
 
     private String username;
@@ -57,9 +58,13 @@ public class MainWindow extends JFrame {
         chats = new Chats(this, httpClient);
         chats.setVisible(true);
 
+        chat = new Chat(this, httpClient);
+        chat.setVisible(true);
+
         contentPane.add(login.getPanel(), "login");
         contentPane.add(register.getPanel(), "register");
         contentPane.add(chats.getPanel(), "chats");
+        contentPane.add(chat.getPanel(), "chat");
 
         showLayout("login");
     }
@@ -85,6 +90,10 @@ public class MainWindow extends JFrame {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public Chat getChat() {
+        return chat;
     }
 
 }
