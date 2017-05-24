@@ -1,6 +1,6 @@
 package server;
 
-import java.io.IOException;
+import java.io.*;
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
@@ -14,11 +14,16 @@ public class Server {
     private ConcurrentHashMap<String, ArrayList<String>> user_invitations = new ConcurrentHashMap<>();
     private ConcurrentHashMap<String, ArrayList<ArrayList<String>>> chat_messages = new ConcurrentHashMap<>(); // chat -> [[author, message, date], ...]
 
+    private File dbDir;
+    private File dbFile;
+
     public static void main(String[] args) throws Exception {
         new Server();
     }
 
-    private Server() throws IOException {
+    private Server() throws IOException, ClassNotFoundException {
+        initDB();
+
         HttpServer httpServer = HttpServer.create(new InetSocketAddress(8000), 0);
         Handler handler = new Handler(this);
 
@@ -48,6 +53,34 @@ public class Server {
 
         httpServer.setExecutor(null);
         httpServer.start();
+    }
+
+    private void initDB() throws ClassNotFoundException, IOException {
+        dbDir = new File(Utils.DB_DIR_NAME);
+        if (!dbDir.exists()) {
+            dbDir.mkdir();
+        }
+
+        dbFile = new File(dbDir, Utils.DB_FILE_NAME);
+        if (dbFile.exists()) {
+            ObjectInputStream ois = new ObjectInputStream(new FileInputStream(dbFile));
+            user_password = (ConcurrentHashMap<String, String>) ois.readObject();
+            user_chats = (ConcurrentHashMap<String, ArrayList<String>>) ois.readObject();
+            user_invitations = (ConcurrentHashMap<String, ArrayList<String>>) ois.readObject();
+            chat_messages = (ConcurrentHashMap<String, ArrayList<ArrayList<String>>>) ois.readObject();
+            ois.close();
+        }
+    }
+
+    public void recordsDatabaseToFile() throws IOException {
+        FileOutputStream fout = new FileOutputStream(dbFile);
+        ObjectOutputStream oos = new ObjectOutputStream(fout);
+        oos.writeObject(user_password);
+        oos.writeObject(user_chats);
+        oos.writeObject(user_invitations);
+        oos.writeObject(chat_messages);
+        oos.close();
+        fout.close();
     }
 
     void insertUser(String username, String password) {

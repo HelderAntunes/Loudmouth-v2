@@ -239,6 +239,8 @@ public class Handler implements HttpHandler {
         OutputStream os = httpExchange.getResponseBody();
         os.write(response.getBytes());
         os.close();
+
+        server.recordsDatabaseToFile();
     }
 
     /**
