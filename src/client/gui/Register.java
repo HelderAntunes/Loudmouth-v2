@@ -36,6 +36,15 @@ public class Register {
                 String password = passwordPasswordField.getText();
                 String repeatPassword = repeatPasswordPasswordField.getText();
 
+                if (username.equals("")) {
+                    errorLbl.setText("username cannot be empty!");
+                    return;
+                }
+                else if (username.contains(" ") || username.contains("&") || username.contains("=")) {
+                    errorLbl.setText("username is invalid.");
+                    return;
+                }
+
                 if (!password.equals(repeatPassword)) {
                     errorLbl.setText("Passwords do not match!");
                     return;

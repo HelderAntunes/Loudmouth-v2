@@ -5,7 +5,9 @@
     <constraints>
       <xy x="20" y="20" width="514" height="400"/>
     </constraints>
-    <properties/>
+    <properties>
+      <background color="-1513260"/>
+    </properties>
     <border type="none"/>
     <children>
       <component id="e009c" class="javax.swing.JTextField" binding="usernameTextField" default-binding="true">
@@ -78,7 +80,7 @@
           <foreground color="-15358008"/>
           <horizontalAlignment value="0"/>
           <horizontalTextPosition value="0"/>
-          <text value="myChat"/>
+          <text value="loudmouth"/>
         </properties>
       </component>
       <component id="17266" class="javax.swing.JLabel" binding="errorLbl">

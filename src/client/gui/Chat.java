@@ -6,6 +6,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.SimpleDateFormat;
@@ -26,6 +27,7 @@ public class Chat {
     private JPanel panel;
     private JLabel invitationInfoLbl;
     private JLabel sendMsgInfoLbl;
+    private JScrollPane scrollPanel;
     private volatile boolean pollingActive = false;
 
     public Chat(MainWindow parent, HttpClient httpClient) {
@@ -52,6 +54,10 @@ public class Chat {
 
                 if (invitee.equals("")) {
                     invitationInfoLbl.setText("Invitee name cannot be empty!");
+                    return;
+                }
+                else if (invitee.contains(" ") || invitee.contains("&") || invitee.contains("=")) {
+                    invitationInfoLbl.setText("Invitee name is invalid.");
                     return;
                 }
 
@@ -89,6 +95,7 @@ public class Chat {
                     return;
                 }
 
+
                 try {
                     String response = httpClient.sendPostBasicAuthentication("/addMessage", urlParameters, username, password);
                     JSONParser parser = new JSONParser();
@@ -96,7 +103,7 @@ public class Chat {
 
                     if (jsonObject.containsKey("success")) {
                         sendMsgInfoLbl.setText("");
-                        setMessages();
+                        setMessages(false);
                     }
 
                 } catch (Exception e1) {
@@ -107,7 +114,7 @@ public class Chat {
         });
     }
 
-    void setMessages() {
+    void setMessages(boolean firstTime) {
         String username = parent.getUsername();
         String password = parent.getPassword();
         String urlParameters = "chatName=" + chatNameLbl.getText();
@@ -126,7 +133,11 @@ public class Chat {
                 String entry = date + ":\n" + author + " said: " + msg + "\n\n";
                 messagesTxt.append(entry);
             }
+
             messagesTextArea.setText(messagesTxt.toString());
+            if (firstTime) {
+                messagesTextArea.setCaretPosition(messagesTextArea.getDocument().getLength());
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -153,7 +164,7 @@ public class Chat {
         @Override
         public void run() {
             while (pollingActive) {
-                setMessages();
+                setMessages(false);
                 try {
                     Thread.sleep(400);
                 } catch (InterruptedException e) {
@@ -171,5 +182,4 @@ public class Chat {
     private void stopPolling() {
         pollingActive = false;
     }
-
 }

@@ -8,6 +8,8 @@ import org.json.simple.parser.JSONParser;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.Iterator;
 
 public class Chats {
@@ -34,6 +36,7 @@ public class Chats {
         this.httpClient = httpClient;
         titleLbl.setFont (titleLbl.getFont ().deriveFont (32.0f));
         myInvitationsLbl.setFont (titleLbl.getFont ().deriveFont (16.0f));
+        myChatsTitleLbl.setFont (titleLbl.getFont ().deriveFont (16.0f));
         createChatLbl.setFont (titleLbl.getFont ().deriveFont (16.0f));
         createButton.addActionListener(new ActionListener() {
             @Override
@@ -45,6 +48,10 @@ public class Chats {
 
                 if (chatName.equals("")) {
                     createChatInfoLbl.setText("Chat name cannot be empty!");
+                    return;
+                }
+                else if (chatName.contains(" ") || chatName.contains("&") || chatName.contains("=")) {
+                    createChatInfoLbl.setText("Chat name is invalid.");
                     return;
                 }
 
@@ -169,8 +176,11 @@ public class Chats {
             if (jsonObject.containsKey("chats")) {
                 JSONArray chats = (JSONArray) jsonObject.get("chats");
                 Iterator iterator = chats.iterator();
-                while (iterator.hasNext())
-                    myChatsComboBox.addItem(iterator.next());
+                while (iterator.hasNext()) {
+                    String chat = (String)iterator.next();
+                    myChatsComboBox.addItem(chat);
+                }
+
             }
         } catch (Exception e) {
             e.printStackTrace();

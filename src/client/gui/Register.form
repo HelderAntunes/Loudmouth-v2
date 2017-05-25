@@ -5,7 +5,9 @@
     <constraints>
       <xy x="20" y="20" width="500" height="400"/>
     </constraints>
-    <properties/>
+    <properties>
+      <background color="-1513260"/>
+    </properties>
     <border type="none"/>
     <children>
       <component id="3c415" class="javax.swing.JLabel">
@@ -101,7 +103,7 @@
         </constraints>
         <properties>
           <foreground color="-15358008"/>
-          <text value="myChat"/>
+          <text value="loudmouth"/>
         </properties>
       </component>
       <component id="5d8e1" class="javax.swing.JLabel" binding="errorLbl">

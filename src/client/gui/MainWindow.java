@@ -4,6 +4,9 @@ import client.network.HttpClient;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 
 public class MainWindow extends JFrame {
     private JPanel contentPane;
@@ -36,7 +39,9 @@ public class MainWindow extends JFrame {
      */
     public MainWindow(HttpClient httpClient) {
         this.httpClient = httpClient;
-        setExtendedState(JFrame.MAXIMIZED_BOTH);
+        setTitle("loudmouth");
+        setSize(600,600);
+        setResizable(false);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
         contentPane = new JPanel(new CardLayout());
@@ -75,7 +80,7 @@ public class MainWindow extends JFrame {
             chats.setInvites();
         }
         else if (layout.equals("chat")) {
-            chat.setMessages();
+            chat.setMessages(true);
             chat.startPolling();
         }
         CardLayout cardLayout = (CardLayout) contentPane.getLayout();
@@ -105,5 +110,23 @@ public class MainWindow extends JFrame {
     Login getLogin() {return login;}
 
     Register getRegister() {return register;}
+
+    String enconde(String ori) {
+        try {
+            return URLEncoder.encode(ori, "UTF-8");
+        } catch (UnsupportedEncodingException e1) {
+            e1.printStackTrace();
+        }
+        return null;
+    }
+
+    String decode(String encoded) {
+        try {
+            String result = URLDecoder.decode(encoded, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
 }

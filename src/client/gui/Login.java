@@ -35,6 +35,15 @@ public class Login {
                 String username = usernameTextField.getText();
                 String password = passwordPasswordField.getText();
 
+                if (username.equals("")) {
+                    errorLbl.setText("username cannot be empty!");
+                    return;
+                }
+                else if (username.contains(" ") || username.contains("&") || username.contains("=")) {
+                    errorLbl.setText("username is invalid.");
+                    return;
+                }
+
                 errorLbl.setText("");
                 String urlParameters = "username=" + username + "&password=" + password;
                 try {
