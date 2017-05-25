@@ -74,6 +74,10 @@ public class MainWindow extends JFrame {
             chats.setMyChats();
             chats.setInvites();
         }
+        else if (layout.equals("chat")) {
+            chat.setMessages();
+            chat.startPolling();
+        }
         CardLayout cardLayout = (CardLayout) contentPane.getLayout();
         cardLayout.show(contentPane, layout);
     }

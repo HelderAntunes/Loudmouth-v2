@@ -26,6 +26,7 @@ public class Chat {
     private JPanel panel;
     private JLabel invitationInfoLbl;
     private JLabel sendMsgInfoLbl;
+    private volatile boolean pollingActive = false;
 
     public Chat(MainWindow parent, HttpClient httpClient) {
         this.parent = parent;
@@ -37,6 +38,7 @@ public class Chat {
             @Override
             public void actionPerformed(ActionEvent e) {
                 parent.showLayout("chats");
+                stopPolling();
             }
         });
         inviteButton.addActionListener(new ActionListener() {
@@ -105,7 +107,7 @@ public class Chat {
         });
     }
 
-    private void setMessages() {
+    void setMessages() {
         String username = parent.getUsername();
         String password = parent.getPassword();
         String urlParameters = "chatName=" + chatNameLbl.getText();
@@ -145,5 +147,29 @@ public class Chat {
     }
 
     JPanel getPanel() {return this.panel;}
+
+    public class GetMessagesPolling implements Runnable {
+
+        @Override
+        public void run() {
+            while (pollingActive) {
+                setMessages();
+                try {
+                    Thread.sleep(400);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    void startPolling() {
+        pollingActive = true;
+        new Thread(new GetMessagesPolling()).start();
+    }
+
+    private void stopPolling() {
+        pollingActive = false;
+    }
 
 }
