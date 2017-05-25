@@ -1,11 +1,11 @@
-# in the shadow - A chat made in the shadow
+# Loudmouth - chat application
 
 Second project developed for the SDIS course at FEUP.
 
 ## Getting Started
 
 * Import the code into the IntelliJ
-* Run the server on Server.java
+* Run the server in Server.java
 * Run the client in MainWindow.java
 
 ### Prerequisites
