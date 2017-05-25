@@ -1,8 +1,10 @@
 package server;
 
 import com.sun.net.httpserver.Headers;
+import com.sun.net.httpserver.HttpContext;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
+import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
@@ -50,6 +52,12 @@ public class Handler implements HttpHandler {
                 break;
             case "/leaveChat":
                 handleLeaveChat(httpExchange);
+                break;
+            case "/getMessages":
+                handleGetMessages(httpExchange);
+                break;
+            case "/addMessage":
+                handleAddMessage(httpExchange);
                 break;
             default:
                 handleInfo(httpExchange);
@@ -209,6 +217,44 @@ public class Handler implements HttpHandler {
         writeResponse(httpExchange, jsonText);
     }
 
+    private void handleGetMessages(HttpExchange httpExchange) throws IOException {
+        Map<String,String> params = queryToMap(httpExchange.getRequestURI().getQuery());
+        String chatName = params.get("chatName");
+        JSONArray jsonArray = new JSONArray();
+
+        ArrayList<ArrayList<String>> messages = server.getChatMessages(chatName);
+        for (ArrayList<String> msg: messages) {
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("author", msg.get(0));
+            jsonObject.put("msg", msg.get(1));
+            jsonObject.put("date", msg.get(2));
+            jsonArray.add(jsonObject);
+        }
+
+        String jsonText = jsonToString(jsonArray);
+        writeResponse(httpExchange, jsonText);
+    }
+
+    private void handleAddMessage(HttpExchange httpExchange) throws IOException {
+        String query = getQueryOfPostRequest(httpExchange);
+        Map<String,String> params = queryToMap(query);
+        String chatName = params.get("chatName");
+        String author = params.get("author");
+        String msg = params.get("msg");
+        String date = params.get("date");
+        ArrayList<String> message = new ArrayList<>();
+        message.add(author);
+        message.add(msg);
+        message.add(date);
+        JSONObject obj = new JSONObject();
+
+        server.addMessageToChat(chatName, message);
+        obj.put("success", "You send message successfully.");
+
+        String jsonText = jsonToString(obj);
+        writeResponse(httpExchange, jsonText);
+    }
+
     private void handleInfo(HttpExchange httpExchange) throws IOException {
         String response = "Use /get?hello=word&foo=bar to see how to handle url parameters";
         writeResponse(httpExchange, response);
@@ -217,6 +263,12 @@ public class Handler implements HttpHandler {
     private String jsonToString(JSONObject jsonObject) throws IOException {
         StringWriter out = new StringWriter();
         jsonObject.writeJSONString(out);
+        return out.toString();
+    }
+
+    private String jsonToString(JSONArray jsonArray) throws IOException {
+        StringWriter out = new StringWriter();
+        jsonArray.writeJSONString(out);
         return out.toString();
     }
 

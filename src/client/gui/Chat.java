@@ -1,18 +1,23 @@
 package client.gui;
 
 import client.network.HttpClient;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class Chat {
+    private MainWindow parent;
+    private HttpClient httpClient;
     private JLabel titleLbl;
     private JLabel chatNameLbl;
     private JTextArea messagesTextArea;
-    private JTextField textField1;
+    private JTextField msgTextFld;
     private JButton sendMessageButton;
     private JLabel inviteSubTitleLbl;
     private JTextField inviteeTextFld;
@@ -20,8 +25,11 @@ public class Chat {
     private JButton exitButton;
     private JPanel panel;
     private JLabel invitationInfoLbl;
+    private JLabel sendMsgInfoLbl;
 
     public Chat(MainWindow parent, HttpClient httpClient) {
+        this.parent = parent;
+        this.httpClient = httpClient;
         titleLbl.setFont (titleLbl.getFont ().deriveFont (32.0f));
         chatNameLbl.setFont (chatNameLbl.getFont ().deriveFont (16.0f));
         inviteSubTitleLbl.setFont (inviteSubTitleLbl.getFont ().deriveFont (16.0f));
@@ -64,9 +72,71 @@ public class Chat {
                 }
             }
         });
+        sendMessageButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String msg = msgTextFld.getText();
+                String chatName = chatNameLbl.getText();
+                String date = getCurrentDate();
+                String username = parent.getUsername();
+                String password = parent.getPassword();
+                String urlParameters = "chatName=" + chatName + "&author=" + username + "&msg=" + msg + "&date=" + date;
+
+                if (msg.equals("")) {
+                    sendMsgInfoLbl.setText("Message cannot be empty!");
+                    return;
+                }
+
+                try {
+                    String response = httpClient.sendPostBasicAuthentication("/addMessage", urlParameters, username, password);
+                    JSONParser parser = new JSONParser();
+                    JSONObject jsonObject = (JSONObject) parser.parse(response);
+
+                    if (jsonObject.containsKey("success")) {
+                        sendMsgInfoLbl.setText("");
+                        setMessages();
+                    }
+
+                } catch (Exception e1) {
+                    e1.printStackTrace();
+                }
+
+            }
+        });
     }
 
-    public void setChannelName(String chatName) {
+    private void setMessages() {
+        String username = parent.getUsername();
+        String password = parent.getPassword();
+        String urlParameters = "chatName=" + chatNameLbl.getText();
+
+        try {
+            String response = httpClient.sendGetBasicAuthentication("/getMessages", urlParameters, username, password);
+            JSONParser parser = new JSONParser();
+            JSONArray jsonArray = (JSONArray) parser.parse(response);
+
+            String messagesTxt = "";
+            for (Object aJsonArray : jsonArray) {
+                JSONObject message = (JSONObject) aJsonArray;
+                String author = (String) message.get("author");
+                String msg = (String) message.get("msg");
+                String date = (String) message.get("date");
+                String entry = date + ":\n" + author + " said: " + msg + "\n\n";
+                messagesTxt += entry;
+            }
+            messagesTextArea.setText(messagesTxt);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private String getCurrentDate() {
+        SimpleDateFormat sdfDate = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+        Date now = new Date();
+        return sdfDate.format(now);
+    }
+
+    void setChannelName(String chatName) {
         this.chatNameLbl.setText(chatName);
     }
 
@@ -74,6 +144,6 @@ public class Chat {
         this.panel.setVisible(b);
     }
 
-    public JPanel getPanel() {return this.panel;}
+    JPanel getPanel() {return this.panel;}
 
 }
