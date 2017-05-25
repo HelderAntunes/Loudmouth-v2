@@ -117,16 +117,16 @@ public class Chat {
             JSONParser parser = new JSONParser();
             JSONArray jsonArray = (JSONArray) parser.parse(response);
 
-            String messagesTxt = "";
+            StringBuilder messagesTxt = new StringBuilder();
             for (Object aJsonArray : jsonArray) {
                 JSONObject message = (JSONObject) aJsonArray;
                 String author = (String) message.get("author");
                 String msg = (String) message.get("msg");
                 String date = (String) message.get("date");
                 String entry = date + ":\n" + author + " said: " + msg + "\n\n";
-                messagesTxt += entry;
+                messagesTxt.append(entry);
             }
-            messagesTextArea.setText(messagesTxt);
+            messagesTextArea.setText(messagesTxt.toString());
         } catch (Exception e) {
             e.printStackTrace();
         }
