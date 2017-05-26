@@ -64,7 +64,7 @@ public class Server {
         hcGetMessages.setAuthenticator(bscAuth);
         hcAddMessage.setAuthenticator(bscAuth);
 
-        httpServer.setExecutor(null);
+        httpServer.setExecutor(java.util.concurrent.Executors.newCachedThreadPool());
         httpServer.start();
     }
 
