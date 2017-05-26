@@ -18,13 +18,18 @@ public class Server {
     private File dbFile;
 
     public static void main(String[] args) throws Exception {
-        new Server();
+        if (args.length > 0) {
+            new Server(args[0]);
+        }
+        else {
+            new Server("localhost");
+        }
     }
 
-    private Server() throws IOException, ClassNotFoundException {
+    private Server(String host) throws IOException, ClassNotFoundException {
         initDB();
 
-        HttpServer httpServer = HttpServer.create(new InetSocketAddress(8000), 0);
+        HttpServer httpServer = HttpServer.create(new InetSocketAddress(host,8000), 0);
         Handler handler = new Handler(this);
 
         httpServer.createContext("/login", handler);

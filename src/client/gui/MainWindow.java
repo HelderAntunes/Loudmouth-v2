@@ -24,6 +24,11 @@ public class MainWindow extends JFrame {
      */
     public static void main(String[] args) {
         HttpClient httpClient = new HttpClient();
+        if (args.length == 1) {
+            String host = args[0];
+            httpClient.setBase_url(host);
+        }
+
         EventQueue.invokeLater(() -> {
             try {
                 MainWindow frame = new MainWindow(httpClient);

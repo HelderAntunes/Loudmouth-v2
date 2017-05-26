@@ -16,12 +16,16 @@ import java.util.Set;
 
 public class HttpClient {
 
-    private final String base_url = "http://localhost:8000";
+    private String base_url = "http://localhost:8000";
 
     public static void main(String[] args) throws Exception {
         HttpClient httpClient = new HttpClient();
         String registerResponse = httpClient.sendPost("/login", "username=helder&password=123456789");
         System.out.println(registerResponse);
+    }
+
+    public void setBase_url(String base_url) {
+        this.base_url = base_url;
     }
 
     public String sendGet(String path, String urlParameters) throws Exception {
